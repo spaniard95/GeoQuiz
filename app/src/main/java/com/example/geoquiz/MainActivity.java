@@ -7,10 +7,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-private Button mTrueButton,mFalseButton,mNextButton;
-private TextView mQuestion;
+
+    private static final String TAG = "QuizActivity";
+    private static final String KEY_INDEX = "index";
+
+    private Button mTrueButton,mFalseButton,mNextButton;
+    private TextView mQuestion;
+
     GeoModel [] quest=new GeoModel []{
             new GeoModel(R.string.question_oceans, true),
 
@@ -18,41 +24,51 @@ private TextView mQuestion;
                     false),
             new GeoModel(R.string.question_americas,
                     true) };
-    private int mCurrentIndex = 0;
+    private int mCurrentIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        if (savedInstanceState != null)      mCurrentIndex =savedInstanceState.getInt(KEY_INDEX, 0);
 
         mTrueButton = (Button)findViewById(R.id.true_button);
         mFalseButton = (Button)findViewById(R.id.false_button);
         mQuestion=(TextView)findViewById(R.id.question_text);
         mNextButton=(Button)findViewById(R.id.next_button);
 
+        mQuestion.setText(quest[mCurrentIndex].getTextResId());
+
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              // Does nothing yet, but soon!
+              check(true);
             }
         });
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Does nothing yet, but soon!
+                check(false);
             }
         });
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCurrentIndex=(1 +mCurrentIndex)% quest.length;;
-                mQuestion.setText(mCurrentIndex);
+                mQuestion.setText(quest[mCurrentIndex].getTextResId());
             }
         });
 
     }
-    public void reply(){
-        //toast
+    public void check(boolean a){
+        Toast.makeText(this, (quest[mCurrentIndex].isAnswer() && a)+"", Toast.LENGTH_LONG).show();;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt(KEY_INDEX,mCurrentIndex);
+
     }
 }
