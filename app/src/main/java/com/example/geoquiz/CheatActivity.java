@@ -12,11 +12,15 @@ import android.widget.TextView;
 
 public class CheatActivity extends AppCompatActivity {
     private static final String EXTRA_ANSWER_IS_TRUE="com.example.geoquiz.answer_is_true";
+    private static final String EXTRA_ANSWER_SHOWN ="com.example.geoquiz.answer_shown";
 
     public static Intent newIntent(Context packageContext, boolean answerIsTrue) {
         Intent intent = new Intent(packageContext, CheatActivity.class);
         intent.putExtra(EXTRA_ANSWER_IS_TRUE, answerIsTrue);
         return intent;
+    }
+    public static boolean wasAnswerShown(Intent result) {
+        return result.getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
     }
     private boolean mAnswerIsTrue;
 
@@ -40,10 +44,16 @@ public class CheatActivity extends AppCompatActivity {
                     mAnswer.setText(R.string.true_button);
                 }
                 else {
-                    mAnswer.setText(R.string.false_button);                }
+                    mAnswer.setText(R.string.false_button);
+                }
+                cheatHappened(true);
             }
         });
+    }
 
-
+    public void cheatHappened(boolean isAnswerShow){
+        Intent data = new Intent();
+        data.putExtra(EXTRA_ANSWER_SHOWN,isAnswerShow);
+        setResult(RESULT_OK, data);
     }
 }

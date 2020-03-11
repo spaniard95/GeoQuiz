@@ -2,6 +2,7 @@ package com.example.geoquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
+    private static final int REQUEST_CODE_CHEAT = 0;
 
     private Button mTrueButton,mFalseButton,mNextButton,mCheatButton;
     private TextView mQuestion;
@@ -24,7 +26,10 @@ public class MainActivity extends AppCompatActivity {
                     false),
             new GeoModel(R.string.question_americas,
                     true) };
+
     private int mCurrentIndex;
+    private boolean mIsCheater;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +71,24 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 boolean answerIsTrue = quest[mCurrentIndex].isAnswer();
                 Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_CODE_CHEAT);
             }
         });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            if (data == null) {
+                return;
+            }
+            mIsCheater = CheatActivity.wasAnswerShown(data);
+        }
     }
     public void check(boolean a){
         Toast.makeText(this, (quest[mCurrentIndex].isAnswer() && a)+"", Toast.LENGTH_LONG).show();;
