@@ -2,7 +2,7 @@ package com.example.geoquiz;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
 
-    private Button mTrueButton,mFalseButton,mNextButton;
+    private Button mTrueButton,mFalseButton,mNextButton,mCheatButton;
     private TextView mQuestion;
 
     GeoModel [] quest=new GeoModel []{
@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         mFalseButton = (Button)findViewById(R.id.false_button);
         mQuestion=(TextView)findViewById(R.id.question_text);
         mNextButton=(Button)findViewById(R.id.next_button);
+        mCheatButton=(Button)findViewById(R.id.cheat_button);
+
 
         mQuestion.setText(quest[mCurrentIndex].getTextResId());
 
@@ -57,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mCurrentIndex=(1 +mCurrentIndex)% quest.length;;
                 mQuestion.setText(quest[mCurrentIndex].getTextResId());
+            }
+        });
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean answerIsTrue = quest[mCurrentIndex].isAnswer();
+                Intent intent = CheatActivity.newIntent(MainActivity.this, answerIsTrue);
+                startActivity(intent);
             }
         });
 
